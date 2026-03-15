@@ -89,6 +89,7 @@ const TRANS = {
     feat3:'Interactive Map', feat3d:'Visualise all places across Riyadh\'s districts on a live map.',
     feat4:'Day Planner',     feat4d:'Generate a full day itinerary matched to your exact budget.',
     newChatBtn:'✦ New Chat',
+    typeLabels:{ hotel:'Hotel', restaurant:'Restaurant', cafe:'Cafe' },
     chatSidebarH:'Try asking',
     suggestions:['Best cafes for studying','Fine dining restaurants','Budget-friendly hotels','Family-friendly restaurants','Specialty coffee shops','Luxury hotel recommendations','Cafes open late at night','Best rated restaurants'],
     chatWelcomeTitle:'GoRiyadh Assistant',
@@ -133,6 +134,7 @@ const TRANS = {
     feat3:'خريطة تفاعلية', feat3d:'استعرض جميع الأماكن عبر أحياء الرياض على خريطة مباشرة.',
     feat4:'مخطط اليوم',    feat4d:'أنشئ جدول يوم كامل يتناسب مع ميزانيتك بالضبط.',
     newChatBtn:'✦ محادثة جديدة',
+    typeLabels:{ hotel:'فندق', restaurant:'مطعم', cafe:'مقهى' },
     chatSidebarH:'جرّب أن تسأل',
     suggestions:['أفضل مقاهٍ للدراسة','مطاعم راقية للعشاء','فنادق مناسبة للميزانية','مطاعم عائلية','محلات قهوة متخصصة','توصيات فنادق فاخرة','مقاهٍ تفتح حتى وقت متأخر','أعلى المطاعم تقييماً'],
     chatWelcomeTitle:'مساعد GoRiyadh',
@@ -262,7 +264,7 @@ function placeCardHTML(doc) {
       <span class="card-type-badge badge-${t}">${esc(t)}</span>
     </div>` : ''}
     <div class="card-body">
-      ${!showImg ? `<span class="card-type-badge-inline badge-${t}">${esc(t)}</span>` : ''}
+      ${!showImg ? `<span class="card-type-badge-inline badge-${t}">${TRANS[G.lang].typeLabels[t] || t}</span>` : ''}
       <div class="card-name">${esc(doc.name)}</div>
       <div class="card-meta">
         ${rating ? `<span class="card-rating">${rating}</span>` : ''}
@@ -284,7 +286,7 @@ function chatPlaceCardHTML(doc) {
   return `
   <div class="chat-place-card">
     <div class="chat-card-body">
-      <span class="card-type-badge-inline badge-${t}" style="margin-bottom:6px">${esc(t)}</span>
+      <span class="card-type-badge-inline badge-${t}" style="margin-bottom:6px">${TRANS[G.lang].typeLabels[t] || t}</span>
       <div class="chat-card-name">${esc(doc.name)}</div>
       <div class="chat-card-meta">${rating} ${district}</div>
     </div>
@@ -341,6 +343,7 @@ function setLang(lang) {
   });
 
   // Chat
+  const ncb = $('#newChatBtn'); if (ncb) ncb.textContent = T.newChatBtn;
   $('#chatSidebarH').textContent = T.chatSidebarH;
   $('#chatSuggestions').querySelectorAll('.suggestion-btn').forEach((b,i) => { b.textContent = T.suggestions[i] || b.textContent; });
   $('#chatWelcomeTitle').textContent = T.chatWelcomeTitle;
