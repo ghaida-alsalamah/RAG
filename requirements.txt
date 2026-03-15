@@ -5,7 +5,8 @@
 pandas>=2.0
 openpyxl>=3.1
 
-# Embeddings
+# Embeddings (torch CPU-only — no CUDA needed)
+torch --index-url https://download.pytorch.org/whl/cpu
 sentence-transformers>=2.7
 
 # Vector database
