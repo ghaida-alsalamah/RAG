@@ -14,11 +14,6 @@ import pickle
 import numpy as np
 import faiss
 from sentence_transformers import SentenceTransformer
-from transformers import (
-    T5ForConditionalGeneration, T5Tokenizer,
-    MarianMTModel, MarianTokenizer,
-)
-import torch
 from groq import Groq
 from dotenv import load_dotenv
 
@@ -26,10 +21,8 @@ load_dotenv()
 
 # ─── Constants ───────────────────────────────────────────────────────────────
 
-EMBED_MODEL    = "all-MiniLM-L6-v2"
-LLM_MODEL      = "google/flan-t5-base"
-TRANSLATE_MODEL = "Helsinki-NLP/opus-mt-en-ar"   # English → Arabic
-INDEX_DIR      = "rag_index"
+EMBED_MODEL = "all-MiniLM-L6-v2"
+INDEX_DIR   = "rag_index"
 
 PRICE_BUDGET_MAP = {
     # restaurant price strings → rough SAR-per-person ceiling
@@ -89,13 +82,9 @@ class RAGEngine:
     """
 
     def __init__(self):
-        self.embedder        = None
-        self.tokenizer       = None
-        self.llm             = None
-        self.trans_tokenizer = None
-        self.trans_model     = None
-        self.index           = None
-        self.metadata        = []   # list of dicts (one per document)
+        self.embedder = None
+        self.index    = None
+        self.metadata = []   # list of dicts (one per document)
 
     # ── Model loading ────────────────────────────────────────────────────────
 
@@ -103,36 +92,6 @@ class RAGEngine:
         if self.embedder is None:
             print(f"Loading embedding model ({EMBED_MODEL}) …")
             self.embedder = SentenceTransformer(EMBED_MODEL)
-
-    def load_llm(self):
-        if self.llm is None:
-            print(f"Loading language model ({LLM_MODEL}) …")
-            self.tokenizer = T5Tokenizer.from_pretrained(LLM_MODEL)
-            self.llm = T5ForConditionalGeneration.from_pretrained(LLM_MODEL)
-            self.llm.eval()
-
-    def load_translator(self):
-        if self.trans_model is None:
-            print(f"Loading translation model ({TRANSLATE_MODEL}) …")
-            self.trans_tokenizer = MarianTokenizer.from_pretrained(TRANSLATE_MODEL)
-            self.trans_model     = MarianMTModel.from_pretrained(TRANSLATE_MODEL)
-            self.trans_model.eval()
-
-    def translate_to_arabic(self, text):
-        """Translate an English string to Arabic using Helsinki opus-mt-en-ar."""
-        self.load_translator()
-        # Split into sentences to stay within token limits
-        sentences = [s.strip() for s in text.replace("\n", " ").split(".") if s.strip()]
-        if not sentences:
-            return text
-        inputs = self.trans_tokenizer(
-            sentences, return_tensors="pt", padding=True,
-            truncation=True, max_length=512,
-        )
-        with torch.no_grad():
-            translated = self.trans_model.generate(**inputs, max_new_tokens=256)
-        parts = [self.trans_tokenizer.decode(t, skip_special_tokens=True) for t in translated]
-        return ".\n".join(parts)
 
     # ── Index building & persistence ─────────────────────────────────────────
 
