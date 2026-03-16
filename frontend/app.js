@@ -1053,9 +1053,17 @@ function updateCompareBar() {
   if (goBtn) {
     goBtn.textContent = T.compareGoBtn;
     goBtn.disabled = list.length < 2;
+    goBtn.onclick = list.length >= 2 ? openCompare : null;
   }
   const clrBtn = $('#compareClearBtn');
-  if (clrBtn) clrBtn.textContent = T.compareClear;
+  if (clrBtn) {
+    clrBtn.textContent = T.compareClear;
+    clrBtn.onclick = () => {
+      G.compareList = [];
+      updateCompareBar();
+      $$('.card-compare-btn').forEach(b => b.classList.remove('active'));
+    };
+  }
 }
 
 function openCompare() {
@@ -1173,6 +1181,10 @@ function openModal(doc) {
   const t = doc.type || 'cafe';
   const img = bestImg(doc.name, t);
 
+  // Only show image for hotels
+  const imgWrap = document.querySelector('#placeModal .modal-img-wrap');
+  if (imgWrap) imgWrap.style.display = t === 'hotel' ? '' : 'none';
+
   const modalImg = $('#modalImg');
   modalImg.src = img;
   modalImg.alt = doc.name;
@@ -1180,7 +1192,7 @@ function openModal(doc) {
   modalImg.onerror = function() { this.onerror = null; this.src = poolImg(doc.name, t); };
 
   const badge = $('#modalTypeBadge');
-  badge.textContent = t;
+  badge.textContent = TRANS[G.lang].typeLabels[t] || t;
   badge.className = `card-type-badge badge-${t}`;
 
   $('#modalName').textContent = doc.name;
