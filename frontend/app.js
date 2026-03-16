@@ -113,6 +113,12 @@ const TRANS = {
     noResults:'No matching places found.',
     clearResults:'✕ Clear',
     connError:'Connection error — is the server running?',
+    voiceTitle:'Voice input',
+    planCopied:'Plan copied to clipboard!',
+    compareTitle:'Compare Places',
+    compareClear:'Clear',
+    compareGoBtn:'Compare',
+    shareItinBtn:'Share Plan',
     loading:'Loading…',
     approxPrice: n => `~${Math.round(n/50)*50} SAR`,
     approxNight: n => `~${Math.round(n/100)*100} SAR/night`,
@@ -158,6 +164,12 @@ const TRANS = {
     noResults:'لم يتم العثور على أماكن مطابقة.',
     clearResults:'✕ مسح',
     connError:'خطأ في الاتصال — هل الخادم يعمل؟',
+    voiceTitle:'إدخال صوتي',
+    planCopied:'تم نسخ الخطة!',
+    compareTitle:'مقارنة الأماكن',
+    compareClear:'مسح',
+    compareGoBtn:'مقارنة',
+    shareItinBtn:'مشاركة الخطة',
     loading:'جارٍ التحميل…',
     approxPrice: n => `~${Math.round(n/50)*50} ريال`,
     approxNight: n => `~${Math.round(n/100)*100} ريال/ليلة`,
@@ -184,6 +196,7 @@ const G = {
   modalMapMarkers: null,
   modalDoc: null,
   toastTimer: null,
+  compareList: [],
 };
 
 let PLACE_IMGS = {};
@@ -274,6 +287,10 @@ function placeCardHTML(doc) {
       <button class="card-share-btn" data-share-name="${esc(doc.name)}">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="13" height="13"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/></svg>
         Share
+      </button>
+      <button class="card-compare-btn" data-compare-name="${esc(doc.name)}">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="12" height="12"><path d="M18 20V10"/><path d="M12 20V4"/><path d="M6 20v-6"/></svg>
+        ${TRANS[G.lang].compareGoBtn || 'Compare'}
       </button>
     </div>
   </div>`;
@@ -514,6 +531,7 @@ function setupChat() {
 
   // Mobile suggestions strip
   injectMobileSuggestions();
+  setupVoice();
 }
 
 function injectMobileSuggestions() {
@@ -545,6 +563,40 @@ function injectMobileSuggestions() {
   row.appendChild(btn);
 
   bar.insertBefore(strip, row);
+}
+
+function setupVoice() {
+  const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
+  if (!SR) return;
+  const row = $('.chat-input-row');
+  if (!row) return;
+
+  const micBtn = document.createElement('button');
+  micBtn.id = 'micBtn';
+  micBtn.className = 'mic-btn';
+  micBtn.setAttribute('aria-label', TRANS[G.lang].voiceTitle);
+  micBtn.innerHTML = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="18" height="18"><path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z"/><path d="M19 10v2a7 7 0 0 1-14 0v-2"/><line x1="12" y1="19" x2="12" y2="23"/><line x1="8" y1="23" x2="16" y2="23"/></svg>`;
+  row.insertBefore(micBtn, row.firstChild);
+
+  const rec = new SR();
+  rec.continuous = false;
+  rec.interimResults = false;
+
+  micBtn.addEventListener('click', () => {
+    if (micBtn.classList.contains('listening')) { rec.stop(); return; }
+    rec.lang = G.lang === 'ar' ? 'ar-SA' : 'en-US';
+    try { rec.start(); } catch(e) {}
+  });
+
+  rec.onstart  = () => micBtn.classList.add('listening');
+  rec.onend    = () => micBtn.classList.remove('listening');
+  rec.onerror  = () => micBtn.classList.remove('listening');
+  rec.onresult = e => {
+    const t = e.results[0][0].transcript;
+    $('#chatInput').value = t;
+    micBtn.classList.remove('listening');
+    setTimeout(sendChat, 100);
+  };
 }
 
 // Converts markdown-style LLM output to formatted HTML
@@ -898,6 +950,10 @@ function renderPlan(idx) {
     ? `${T.estCost}: ${T.approxPrice(plan.estimated_cost)}`
     : '';
 
+  const T2 = TRANS[G.lang];
+  const shareBtn = $('#planShareBtn');
+  if (shareBtn) shareBtn.textContent = '📤 ' + T2.shareItinBtn;
+
   const slots = plan.slots || [];
   $('#planSlots').innerHTML = slots.map(slot => {
     const doc = slot.doc || {};
@@ -933,6 +989,129 @@ function renderPlan(idx) {
   }).join('');
 
   $('#planSlots').querySelectorAll('img').forEach(guardImg);
+  const sb = $('#planShareBtn');
+  if (sb) { sb.onclick = () => shareItinerary(idx); }
+}
+
+function shareItinerary(idx) {
+  const T = TRANS[G.lang];
+  const plan = G.plans[idx];
+  if (!plan) return;
+  const lines = [`🗓️ ${plan.theme} — GoRiyadh`];
+  if (plan.estimated_cost) lines.push(`💰 ${T.estCost}: ${T.approxPrice(plan.estimated_cost)}`);
+  lines.push('');
+  (plan.slots || []).forEach(s => {
+    const d = s.doc || {};
+    const icon = T.periodIcons[s.period] || '⏰';
+    const period = T['period'+s.period] || s.period;
+    lines.push(`${icon} ${period}: ${d.name || '—'}`);
+    if (d.district) lines.push(`   📍 ${d.district}`);
+    if (d.rating)   lines.push(`   ⭐ ${parseFloat(d.rating).toFixed(1)}`);
+    lines.push('');
+  });
+  lines.push('📱 GoRiyadh — AI Travel Guide for Riyadh');
+  const text = lines.join('\n');
+  if (navigator.share) {
+    navigator.share({ title: plan.theme, text }).catch(()=>{});
+  } else {
+    navigator.clipboard.writeText(text).then(() => showToast(T.planCopied));
+  }
+}
+
+// ── Compare ──────────────────────────────────────────────────────
+function toggleCompare(name) {
+  const doc = G.docsMap[name];
+  if (!doc) return;
+  const idx = G.compareList.findIndex(d => d.name === name);
+  if (idx >= 0) {
+    G.compareList.splice(idx, 1);
+  } else {
+    if (G.compareList.length >= 3) { showToast('Max 3 places to compare'); return; }
+    G.compareList.push(doc);
+  }
+  updateCompareBar();
+  // update button states
+  $$('.card-compare-btn').forEach(btn => {
+    const n = btn.dataset.compareName;
+    const active = G.compareList.some(d => d.name === n);
+    btn.classList.toggle('active', active);
+  });
+}
+
+function updateCompareBar() {
+  const T   = TRANS[G.lang];
+  const bar = $('#compareBar');
+  if (!bar) return;
+  const list = G.compareList;
+  if (list.length === 0) { bar.style.display = 'none'; return; }
+  bar.style.display = 'flex';
+  const slots = $('#compareBarSlots');
+  slots.innerHTML = list.map(d =>
+    `<span class="compare-bar-chip">${esc(d.name)}<button onclick="toggleCompare('${esc(d.name)}')" style="background:none;border:none;cursor:pointer;color:inherit;margin-left:4px;font-size:.9em">✕</button></span>`
+  ).join('');
+  const goBtn = $('#compareGoBtn');
+  if (goBtn) {
+    goBtn.textContent = T.compareGoBtn;
+    goBtn.disabled = list.length < 2;
+  }
+  const clrBtn = $('#compareClearBtn');
+  if (clrBtn) clrBtn.textContent = T.compareClear;
+}
+
+function openCompare() {
+  const T    = TRANS[G.lang];
+  const docs = G.compareList;
+  if (docs.length < 2) return;
+
+  const rows = [
+    { label: G.lang==='ar'?'النوع':'Type',      fn: d => T.typeLabels[d.type] || d.type },
+    { label: G.lang==='ar'?'الحي':'District',   fn: d => d.district || '—' },
+    { label: G.lang==='ar'?'التقييم':'Rating',  fn: d => d.rating ? `⭐ ${parseFloat(d.rating).toFixed(1)}` : '—' },
+    { label: G.lang==='ar'?'السعر':'Price',     fn: d => formatPrice(d) || '—' },
+  ];
+
+  // find best rating for highlighting
+  const ratings = docs.map(d => parseFloat(d.rating) || 0);
+  const maxRating = Math.max(...ratings);
+
+  let html = `<h2 class="compare-modal-title">${T.compareTitle}</h2>`;
+  html += '<div class="compare-table-wrap"><table class="compare-table"><thead><tr><th></th>';
+  docs.forEach(d => { html += `<th>${esc(d.name)}</th>`; });
+  html += '</tr></thead><tbody>';
+
+  rows.forEach(row => {
+    html += `<tr><td class="compare-row-label">${row.label}</td>`;
+    docs.forEach(d => {
+      const val = row.fn(d);
+      const isBest = row.label.includes('Rating') && (parseFloat(d.rating)||0) === maxRating && maxRating > 0;
+      html += `<td${isBest?' class="compare-best"':''}>${esc(String(val))}</td>`;
+    });
+    html += '</tr>';
+  });
+  html += '</tbody></table></div>';
+
+  $('#compareTable').innerHTML = html;
+  $('#compareModal').style.display = 'flex';
+}
+
+function setupCompare() {
+  // delegated click on any compare button in the cards grid
+  document.addEventListener('click', e => {
+    const cBtn = e.target.closest('.card-compare-btn');
+    if (cBtn) { e.stopPropagation(); toggleCompare(cBtn.dataset.compareName); return; }
+    const goBtn = e.target.closest('#compareGoBtn');
+    if (goBtn) { openCompare(); return; }
+    const clrBtn = e.target.closest('#compareClearBtn');
+    if (clrBtn) { G.compareList = []; updateCompareBar(); $$('.card-compare-btn').forEach(b=>b.classList.remove('active')); return; }
+    const closeBtn = e.target.closest('#compareModalClose');
+    if (closeBtn) { $('#compareModal').style.display = 'none'; return; }
+    if (e.target === $('#compareModal')) { $('#compareModal').style.display = 'none'; }
+  });
+  document.addEventListener('keydown', e => {
+    if (e.key === 'Escape' && $('#compareModal') && $('#compareModal').style.display !== 'none') {
+      $('#compareModal').style.display = 'none';
+    }
+  });
 }
 
 // ══════════════════════════════════════════════════════════════════
@@ -1168,6 +1347,7 @@ function init() {
   setupPlan();
   setupTheme();
   setupModal();
+  setupCompare();
   setupNavScroll();
   loadStats();
   setTimeout(setupScrollReveal, 300);
