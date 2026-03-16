@@ -59,15 +59,31 @@ QUERY_EXPANSIONS = {
     "arabic":     "arabic traditional local cuisine food",
     "italian":    "italian pizza pasta cuisine restaurant",
     "japanese":   "japanese sushi ramen cuisine restaurant",
-    "رومانسي":    "رومانسي عشاء فاخر أجواء هادئة راقي",
-    "رومانسية":   "مطعم رومانسي راقي أجواء هادئة عشاء",
-    "دراسة":      "مقهى هادئ للدراسة واي فاي",
-    "عائلي":      "مطعم عائلي مناسب للأطفال",
-    "فطور":       "مقهى فطور صباحي",
-    "غداء":       "مطعم غداء وجبة",
-    "عشاء":       "مطعم عشاء مساء",
-    "فاخر":       "فاخر راقي مطعم فندق",
-    "رخيص":       "رخيص اقتصادي قليل التكلفة",
+    "رومانسي":    "رومانسي عشاء فاخر أجواء هادئة راقي romantic fine dining",
+    "رومانسية":   "مطعم رومانسي راقي أجواء هادئة عشاء romantic restaurant",
+    "دراسة":      "مقهى هادئ للدراسة واي فاي quiet cafe study wifi",
+    "عائلي":      "مطعم عائلي مناسب للأطفال family restaurant kids",
+    "فطور":       "مقهى فطور صباحي cafe breakfast morning",
+    "غداء":       "مطعم غداء وجبة restaurant lunch meal",
+    "عشاء":       "مطعم عشاء مساء restaurant dinner evening",
+    "فاخر":       "فاخر راقي مطعم فندق luxury upscale hotel restaurant",
+    "رخيص":       "رخيص اقتصادي قليل التكلفة cheap budget affordable",
+    # Arabic type keywords → English so FAISS matches English-language documents
+    "فندق":       "hotel accommodation stay room Riyadh",
+    "فنادق":      "hotels accommodation stay room Riyadh",
+    "مطعم":       "restaurant food dining eat Riyadh",
+    "مطاعم":      "restaurants food dining eat Riyadh",
+    "مقهى":       "cafe coffee shop study Riyadh",
+    "مقاهي":      "cafes coffee shops Riyadh",
+    "قهوة":       "coffee cafe specialty espresso Riyadh",
+    "إقامة":      "hotel accommodation stay room Riyadh",
+    "أكل":        "restaurant food eat dining Riyadh",
+    "وجبة":       "restaurant meal food dining",
+    "تقييم":      "rating highly rated best top Riyadh",
+    "ميزانية":    "budget affordable cheap price Riyadh",
+    "شمال":       "north Riyadh Al Nakheel Al Yasmin",
+    "جنوب":       "south Riyadh",
+    "وسط":        "central Riyadh Al Olaya",
 }
 
 
@@ -159,6 +175,7 @@ class RAGEngine:
         max_budget=None,
         price_tiers=None,
         district_hint=None,
+        _k_override=None,
     ):
         """
         Semantic search over the FAISS index with:
@@ -186,7 +203,9 @@ class RAGEngine:
 
         # 2. Large candidate pool — bigger when price tier filtering is active
         # (price tiers are rare, so we need to cast a wider net)
-        if price_tiers:
+        if _k_override:
+            k_search = min(self.index.ntotal, _k_override)
+        elif price_tiers:
             k_search = min(self.index.ntotal, max(top_k * 40, 250))
         else:
             k_search = min(self.index.ntotal, max(top_k * 15, 80))
@@ -467,7 +486,11 @@ class RAGEngine:
         if len(docs) < max(2, top_k // 2) and (max_budget or price_tiers):
             docs = self.retrieve(question, top_k=top_k, filter_type=filter_type,
                                  district_hint=district_hint)
-        # Fallback 2: still too few → drop all filters
+        # Fallback 2: still too few → widen candidate pool, keep type filter
+        if len(docs) < 2 and filter_type:
+            docs = self.retrieve(question, top_k=top_k, filter_type=filter_type,
+                                 district_hint=district_hint, _k_override=400)
+        # Fallback 3: last resort → drop all filters
         if len(docs) < 2 and filter_type:
             docs = self.retrieve(question, top_k=top_k, district_hint=district_hint)
         if not docs:
