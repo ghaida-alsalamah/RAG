@@ -1397,6 +1397,7 @@ function launchConfetti() {
 // ══════════════════════════════════════════════════════════════════
 function setupTilt() {
   document.addEventListener('mousemove', e => {
+    if (!(e.target instanceof Element)) return;
     const card = e.target.closest('.place-card');
     if (!card) return;
     const r = card.getBoundingClientRect();
@@ -1405,6 +1406,7 @@ function setupTilt() {
     card.style.transform = `perspective(700px) rotateY(${x}deg) rotateX(${y}deg) translateY(-6px) scale(1.01)`;
   });
   document.addEventListener('mouseleave', e => {
+    if (!(e.target instanceof Element)) return;
     const card = e.target.closest('.place-card');
     if (card) card.style.transform = '';
   }, true);
