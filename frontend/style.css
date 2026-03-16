@@ -149,7 +149,7 @@ img{display:block;width:100%;object-fit:cover}
 .hero{
   min-height:92vh;display:flex;align-items:center;justify-content:center;
   text-align:center;padding:80px 24px 60px;position:relative;overflow:hidden;
-  background:url('https://media.istockphoto.com/id/1482483548/photo/night-panorama-of-business-district-of-riyadh-city-al-riyadh-saudi-arabia.jpg?s=170667a&w=0&k=20&c=BEb2-KjD0l34YXzJSf43ruMxgebXT-tg3IGqA5VV2NI=') center/cover no-repeat;
+  background:url('https://vid.alarabiya.net/images/2018/09/23/fe48a37f-8b9a-4c26-ae93-3188b4277b4a/fe48a37f-8b9a-4c26-ae93-3188b4277b4a.jpg') center/cover no-repeat;
 }
 .hero-overlay{position:absolute;inset:0;background:rgba(0,0,0,.42)}
 
