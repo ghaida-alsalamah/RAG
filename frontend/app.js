@@ -301,7 +301,7 @@ function placeCardHTML(doc) {
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="13" height="13"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/></svg>
         Share
       </button>
-      <button class="card-compare-btn" data-compare-name="${esc(doc.name)}">
+      <button class="card-compare-btn" data-compare-name="${esc(doc.name)}" onclick="event.stopPropagation();toggleCompare(this.getAttribute('data-compare-name'))">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="12" height="12"><path d="M18 20V10"/><path d="M12 20V4"/><path d="M6 20v-6"/></svg>
         ${TRANS[G.lang].compareGoBtn || 'Compare'}
       </button>
@@ -1126,8 +1126,6 @@ function openCompare() {
 function setupCompare() {
   // delegated click on any compare button in the cards grid
   document.addEventListener('click', e => {
-    const cBtn = e.target.closest('.card-compare-btn');
-    if (cBtn) { e.stopPropagation(); toggleCompare(cBtn.dataset.compareName); return; }
     const goBtn = e.target.closest('#compareGoBtn');
     if (goBtn) { openCompare(); return; }
     const clrBtn = e.target.closest('#compareClearBtn');
