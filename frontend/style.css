@@ -697,8 +697,7 @@ img{display:block;width:100%;object-fit:cover}
 [dir="rtl"] .hero-search-box{flex-direction:row-reverse}
 [dir="rtl"] .ai-answer-box{border-left:none;border-right:4px solid var(--green);border-radius:var(--r-md) 0 0 var(--r-md)}
 [dir="rtl"] .msg-row.user{flex-direction:row}
-[dir="rtl"] .msg-row.ai   .msg-bubble{border-radius:var(--r-lg) 4px var(--r-lg) var(--r-lg)}
-[dir="rtl"] .msg-row.user .msg-bubble{border-radius:4px var(--r-lg) var(--r-lg) var(--r-lg)}
+[dir="rtl"] .msg-row.ai{flex-direction:row-reverse}
 [dir="rtl"] .explore-body{flex-direction:row-reverse}
 [dir="rtl"] .chat-sidebar{border-right:none;border-left:1px solid var(--border)}
 [dir="rtl"] .plan-slot-period{order:2}
