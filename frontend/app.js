@@ -376,8 +376,8 @@ function setLang(lang) {
   const ncb = $('#newChatBtn'); if (ncb) ncb.textContent = T.newChatBtn;
   $('#chatSidebarH').textContent = T.chatSidebarH;
   $('#chatSuggestions').querySelectorAll('.suggestion-btn').forEach((b,i) => { b.textContent = T.suggestions[i] || b.textContent; });
-  $('#chatWelcomeTitle').textContent = T.chatWelcomeTitle;
-  $('#chatWelcomeSub').textContent   = T.chatWelcomeSub;
+  const cwt = $('#chatWelcomeTitle'); if (cwt) cwt.textContent = T.chatWelcomeTitle;
+  const cws = $('#chatWelcomeSub');   if (cws) cws.textContent = T.chatWelcomeSub;
   $('#chatInput').placeholder = T.chatPh;
 
   // Explore
@@ -414,6 +414,9 @@ function setLang(lang) {
   $('#budgetInput').placeholder = T.budgetPh;
   $('#genPlanBtn').textContent  = T.genBtn;
   $('#planEmptyTxt').textContent = T.planEmptyTxt;
+
+  // Compare bar buttons (if visible)
+  if (G.compareList.length) updateCompareBar();
 
   // Re-render cards if explore is loaded
   if (G.exploreLoaded && G.exploreDocs.length) renderExploreCards(G.exploreDocs);
@@ -994,9 +997,7 @@ function renderPlan(idx) {
         <span class="slot-period-icon">${icon}</span>
         <span class="slot-period-label">${periodLabel}</span>
       </div>
-      <div class="plan-slot-img">
-        ${imgTag(img, doc.name||'', t)}
-      </div>
+      ${t === 'hotel' ? `<div class="plan-slot-img">${imgTag(img, doc.name||'', t)}</div>` : ''}
       <div class="plan-slot-info">
         <span class="slot-type-badge ${colors[t]||'badge-cafe'}">${esc(t)}</span>
         <div class="slot-name">${esc(doc.name||'—')}</div>

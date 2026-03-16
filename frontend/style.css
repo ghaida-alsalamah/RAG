@@ -149,7 +149,7 @@ img{display:block;width:100%;object-fit:cover}
 .hero{
   min-height:92vh;display:flex;align-items:center;justify-content:center;
   text-align:center;padding:80px 24px 60px;position:relative;overflow:hidden;
-  background:url('https://i.pinimg.com/originals/38/1d/5b/381d5b39f4cf982d3bc779463073b0b1.jpg') center/cover no-repeat;
+  background:url('https://media.istockphoto.com/id/1482483548/photo/night-panorama-of-business-district-of-riyadh-city-al-riyadh-saudi-arabia.jpg?s=170667a&w=0&k=20&c=BEb2-KjD0l34YXzJSf43ruMxgebXT-tg3IGqA5VV2NI=') center/cover no-repeat;
 }
 .hero-overlay{position:absolute;inset:0;background:rgba(0,0,0,.42)}
 
