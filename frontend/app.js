@@ -1120,7 +1120,9 @@ function openCompare() {
   html += '</tbody></table></div>';
 
   $('#compareTable').innerHTML = html;
-  $('#compareModal').style.display = 'flex';
+  const cm = $('#compareModal');
+  cm.style.display = 'flex';
+  requestAnimationFrame(() => cm.classList.add('open'));
 }
 
 function setupCompare() {
@@ -1131,8 +1133,8 @@ function setupCompare() {
     const clrBtn = e.target.closest('#compareClearBtn');
     if (clrBtn) { G.compareList = []; updateCompareBar(); $$('.card-compare-btn').forEach(b=>b.classList.remove('active')); return; }
     const closeBtn = e.target.closest('#compareModalClose');
-    if (closeBtn) { $('#compareModal').style.display = 'none'; return; }
-    if (e.target === $('#compareModal')) { $('#compareModal').style.display = 'none'; }
+    if (closeBtn) { const cm=$('#compareModal'); cm.classList.remove('open'); setTimeout(()=>cm.style.display='none',300); return; }
+    if (e.target === $('#compareModal')) { const cm=e.target; cm.classList.remove('open'); setTimeout(()=>cm.style.display='none',300); }
   });
   document.addEventListener('keydown', e => {
     if (e.key === 'Escape' && $('#compareModal') && $('#compareModal').style.display !== 'none') {
