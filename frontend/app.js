@@ -44,6 +44,19 @@ const IMG = {
   ],
 };
 
+// ── SVG icon strings ─────────────────────────────────────────────
+const ICONS = {
+  star:    `<svg class="ic ic-star" viewBox="0 0 24 24" fill="currentColor" width="13" height="13" aria-hidden="true"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>`,
+  pin:     `<svg class="ic ic-pin" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="12" height="12" aria-hidden="true"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>`,
+  sun:     `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="18" height="18" aria-hidden="true"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg>`,
+  moon:    `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="18" height="18" aria-hidden="true"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>`,
+  sunPd:   `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="20" height="20" aria-hidden="true"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg>`,
+  forkPd:  `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="20" height="20" aria-hidden="true"><path d="M3 2v7c0 1.1.9 2 2 2h4a2 2 0 0 0 2-2V2"/><path d="M7 2v20"/><path d="M21 15V2a5 5 0 0 0-5 5v6c0 1.1.9 2 2 2h3v7"/></svg>`,
+  moonPd:  `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="20" height="20" aria-hidden="true"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>`,
+  close:   `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" width="15" height="15" aria-hidden="true"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>`,
+  share:   `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="14" height="14" aria-hidden="true"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/></svg>`,
+};
+
 // ── District centroids ───────────────────────────────────────────
 const DISTRICT_COORDS = {
   'Al Olaya':[24.6927,46.6810],'Al Nakheel':[24.8020,46.6470],
@@ -108,10 +121,10 @@ const TRANS = {
     budgetLabel:'Daily Budget (SAR)', budgetPh:'e.g. 500', genBtn:'Generate Plans',
     planEmptyTxt:'Enter your budget above to generate personalised day plans.',
     periodMorning:'Morning', periodAfternoon:'Afternoon', periodEvening:'Evening',
-    periodIcons:{ Morning:'☀️', Afternoon:'🍽️', Evening:'🌙' },
+    periodIcons:{ Morning:'sunPd', Afternoon:'forkPd', Evening:'moonPd' },
     estCost:'Estimated total',
     noResults:'No matching places found.',
-    clearResults:'✕ Clear',
+    clearResults:'Clear',
     connError:'Connection error — is the server running?',
     voiceTitle:'Voice input',
     planCopied:'Plan copied to clipboard!',
@@ -159,10 +172,10 @@ const TRANS = {
     budgetLabel:'الميزانية اليومية (ريال)', budgetPh:'مثال: 500', genBtn:'إنشاء الخطط',
     planEmptyTxt:'أدخل ميزانيتك أعلاه لإنشاء خطط مخصصة.',
     periodMorning:'الصباح', periodAfternoon:'الظهيرة', periodEvening:'المساء',
-    periodIcons:{ Morning:'☀️', Afternoon:'🍽️', Evening:'🌙' },
+    periodIcons:{ Morning:'sunPd', Afternoon:'forkPd', Evening:'moonPd' },
     estCost:'التكلفة التقديرية',
     noResults:'لم يتم العثور على أماكن مطابقة.',
-    clearResults:'✕ مسح',
+    clearResults:'مسح',
     connError:'خطأ في الاتصال — هل الخادم يعمل؟',
     voiceTitle:'إدخال صوتي',
     planCopied:'تم نسخ الخطة!',
@@ -265,8 +278,8 @@ function placeCardHTML(doc) {
   G.docsMap[doc.name] = doc;
   const t = doc.type || 'cafe';
   const img = bestImg(doc.name, t);
-  const rating = doc.rating ? `⭐ ${parseFloat(doc.rating).toFixed(1)}` : '';
-  const district = doc.district ? `📍 ${doc.district}` : '';
+  const rating = doc.rating ? `<span class="ic-rating">${ICONS.star} ${parseFloat(doc.rating).toFixed(1)}</span>` : '';
+  const district = doc.district ? `<span class="ic-district">${ICONS.pin} ${esc(doc.district)}</span>` : '';
   const price = formatPrice(doc);
   const showImg = t === 'hotel';
   return `
@@ -280,8 +293,8 @@ function placeCardHTML(doc) {
       ${!showImg ? `<span class="card-type-badge-inline badge-${t}">${TRANS[G.lang].typeLabels[t] || t}</span>` : ''}
       <div class="card-name">${esc(doc.name)}</div>
       <div class="card-meta">
-        ${rating ? `<span class="card-rating">${rating}</span>` : ''}
-        ${district ? `<span>${district}</span>` : ''}
+        ${rating}
+        ${district}
       </div>
       ${price ? `<div class="card-price">${esc(price)}</div>` : ''}
       <button class="card-share-btn" data-share-name="${esc(doc.name)}">
@@ -298,8 +311,8 @@ function placeCardHTML(doc) {
 
 function chatPlaceCardHTML(doc) {
   const t = doc.type || 'cafe';
-  const rating = doc.rating ? `⭐ ${parseFloat(doc.rating).toFixed(1)}` : '';
-  const district = doc.district ? `· ${doc.district}` : '';
+  const rating = doc.rating ? `<span class="ic-rating">${ICONS.star} ${parseFloat(doc.rating).toFixed(1)}</span>` : '';
+  const district = doc.district ? `<span class="ic-district">${ICONS.pin} ${esc(doc.district)}</span>` : '';
   return `
   <div class="chat-place-card">
     <div class="chat-card-body">
@@ -413,9 +426,11 @@ async function loadStats() {
     const r = await fetch('/api/stats');
     if (!r.ok) return;
     const d = await r.json();
-    if ($('#statCafes')) $('#statCafes').textContent = approxStat(d.cafes || 0);
-    if ($('#statRests'))  $('#statRests').textContent  = approxStat(d.restaurants || 0);
-    if ($('#statHotels')) $('#statHotels').textContent = approxStat(d.hotels || 0);
+    const cafes = d.cafes || 0, rests = d.restaurants || 0, hotels = d.hotels || 0;
+    if ($('#statCafes')) $('#statCafes').textContent = approxStat(cafes);
+    if ($('#statRests'))  $('#statRests').textContent  = approxStat(rests);
+    if ($('#statHotels')) $('#statHotels').textContent = approxStat(hotels);
+    setupStatCounters(cafes, rests, hotels);
   } catch (_) {}
 }
 
@@ -696,6 +711,7 @@ async function sendChat() {
   const typingRow = appendTyping();
   const sendBtn = $('#chatSendBtn');
   sendBtn.disabled = true;
+  showProgress();
 
   try {
     const res = await fetch('/api/chat', {
@@ -722,6 +738,7 @@ async function sendChat() {
   } finally {
     sendBtn.disabled = false;
     input.focus();
+    hideProgress();
   }
 }
 
@@ -873,7 +890,7 @@ async function loadMapPlaces(type) {
       const jlng = lng + (Math.random()-.5)*.018;
       const color = colors[doc.type] || '#555';
       const img   = bestImg(doc.name, doc.type);
-      const rating = doc.rating ? `⭐ ${parseFloat(doc.rating).toFixed(1)}` : '';
+      const rating = doc.rating ? `★ ${parseFloat(doc.rating).toFixed(1)}` : '';
 
       const marker = Lf.circleMarker([jlat,jlng], {
         radius:7, fillColor:color, color:'#fff', weight:1.5, fillOpacity:.85,
@@ -913,6 +930,7 @@ async function generatePlans() {
   const btn = $('#genPlanBtn');
   btn.textContent = '…';
   btn.disabled = true;
+  showProgress();
 
   try {
     const res = await fetch('/api/itinerary', {
@@ -929,6 +947,7 @@ async function generatePlans() {
       $('#planEmpty').style.display  = 'none';
       $('#planResults').style.display = 'block';
       renderPlan(0);
+      launchConfetti();
     }
   } catch(e) {
     alert(TRANS[G.lang].connError);
@@ -936,6 +955,7 @@ async function generatePlans() {
   } finally {
     btn.textContent = TRANS[G.lang].genBtn;
     btn.disabled    = false;
+    hideProgress();
   }
 }
 
@@ -952,18 +972,19 @@ function renderPlan(idx) {
 
   const T2 = TRANS[G.lang];
   const shareBtn = $('#planShareBtn');
-  if (shareBtn) shareBtn.textContent = '📤 ' + T2.shareItinBtn;
+  if (shareBtn) shareBtn.innerHTML = `${ICONS.share} ${T2.shareItinBtn}`;
 
   const slots = plan.slots || [];
   $('#planSlots').innerHTML = slots.map(slot => {
     const doc = slot.doc || {};
     const t   = doc.type || slot.type || 'cafe';
     const img = bestImg(doc.name||'', t);
-    const rating = doc.rating ? `⭐ ${parseFloat(doc.rating).toFixed(1)}` : '';
-    const district = doc.district ? `📍 ${doc.district}` : '';
+    const rating = doc.rating ? `<span class="ic-rating">${ICONS.star} ${parseFloat(doc.rating).toFixed(1)}</span>` : '';
+    const district = doc.district ? `<span class="ic-district">${ICONS.pin} ${esc(doc.district)}</span>` : '';
     const price = doc.name ? formatPrice(doc) : null;
     const period = slot.period || 'Morning';
-    const icon   = T.periodIcons[period] || '⏰';
+    const iconKey = T.periodIcons[period] || 'sunPd';
+    const icon = ICONS[iconKey] || '';
     const periodLabel = T['period'+period] || period;
     const colors = { cafe:'badge-cafe', restaurant:'badge-restaurant', hotel:'badge-hotel' };
 
@@ -980,7 +1001,7 @@ function renderPlan(idx) {
         <span class="slot-type-badge ${colors[t]||'badge-cafe'}">${esc(t)}</span>
         <div class="slot-name">${esc(doc.name||'—')}</div>
         <div class="slot-meta">
-          ${rating ? `<span>${rating}</span>  ` : ''}
+          ${rating}
           ${district}
         </div>
         ${price ? `<div class="slot-price">${esc(price)}</div>` : ''}
@@ -1047,7 +1068,7 @@ function updateCompareBar() {
   bar.style.display = 'flex';
   const slots = $('#compareBarSlots');
   slots.innerHTML = list.map(d =>
-    `<span class="compare-bar-chip">${esc(d.name)}<button onclick="toggleCompare('${esc(d.name)}')" style="background:none;border:none;cursor:pointer;color:inherit;margin-left:4px;font-size:.9em">✕</button></span>`
+    `<span class="compare-bar-chip">${esc(d.name)}<button onclick="toggleCompare('${esc(d.name)}')" class="chip-close-btn" aria-label="Remove">${ICONS.close}</button></span>`
   ).join('');
   const goBtn = $('#compareGoBtn');
   if (goBtn) {
@@ -1074,7 +1095,7 @@ function openCompare() {
   const rows = [
     { label: G.lang==='ar'?'النوع':'Type',      fn: d => T.typeLabels[d.type] || d.type },
     { label: G.lang==='ar'?'الحي':'District',   fn: d => d.district || '—' },
-    { label: G.lang==='ar'?'التقييم':'Rating',  fn: d => d.rating ? `⭐ ${parseFloat(d.rating).toFixed(1)}` : '—' },
+    { label: G.lang==='ar'?'التقييم':'Rating',  fn: d => d.rating ? `★ ${parseFloat(d.rating).toFixed(1)}` : '—' },
     { label: G.lang==='ar'?'السعر':'Price',     fn: d => formatPrice(d) || '—' },
   ];
 
@@ -1197,12 +1218,12 @@ function openModal(doc) {
 
   $('#modalName').textContent = doc.name;
 
-  const rating = doc.rating ? `⭐ ${parseFloat(doc.rating).toFixed(1)}` : '';
+  const rating = doc.rating ? `<span class="ic-rating">${ICONS.star} ${parseFloat(doc.rating).toFixed(1)}</span>` : '';
   const district = doc.district || '';
   const price = formatPrice(doc);
   const metaItems = [];
   if (rating)   metaItems.push(`<span class="modal-meta-item">${rating}</span>`);
-  if (district) metaItems.push(`<span class="modal-meta-item">📍 ${esc(district)}</span>`);
+  if (district) metaItems.push(`<span class="modal-meta-item ic-district">${ICONS.pin} ${esc(district)}</span>`);
   if (price)    metaItems.push(`<span class="modal-meta-item modal-price">${esc(price)}</span>`);
   $('#modalMeta').innerHTML = metaItems.join('');
 
@@ -1273,9 +1294,9 @@ function setupModal() {
       sharePlace(shareBtn.dataset.shareName);
       return;
     }
-    // Card click → open modal
+    // Card click → open modal (not when compare/share button clicked)
     const card = e.target.closest('.place-card[data-place-name]');
-    if (card) {
+    if (card && !e.target.closest('.card-compare-btn') && !e.target.closest('.card-share-btn')) {
       const doc = G.docsMap[card.dataset.placeName];
       if (doc) openModal(doc);
     }
@@ -1285,6 +1306,110 @@ function setupModal() {
   document.addEventListener('keydown', e => {
     if (e.key === 'Escape') closeModal();
   });
+}
+
+// ══════════════════════════════════════════════════════════════════
+// PROGRESS BAR
+// ══════════════════════════════════════════════════════════════════
+let _progTimer = null;
+function showProgress() {
+  let bar = $('#progressBar');
+  if (!bar) {
+    bar = document.createElement('div');
+    bar.id = 'progressBar';
+    document.body.prepend(bar);
+  }
+  clearTimeout(_progTimer);
+  bar.style.transition = 'none';
+  bar.style.width = '0';
+  bar.style.opacity = '1';
+  requestAnimationFrame(() => {
+    bar.style.transition = 'width .4s var(--ease)';
+    bar.style.width = '70%';
+  });
+}
+function hideProgress() {
+  const bar = $('#progressBar');
+  if (!bar) return;
+  bar.style.width = '100%';
+  _progTimer = setTimeout(() => {
+    bar.style.opacity = '0';
+    bar.style.width = '0';
+  }, 350);
+}
+
+// ══════════════════════════════════════════════════════════════════
+// STAT COUNTERS
+// ══════════════════════════════════════════════════════════════════
+function animateCount(el, target, suffix = '') {
+  const duration = 1400;
+  const start = performance.now();
+  const step = t => {
+    const p = Math.min((t - start) / duration, 1);
+    const eased = 1 - Math.pow(1 - p, 3);
+    el.textContent = Math.floor(eased * target).toLocaleString() + suffix;
+    if (p < 1) requestAnimationFrame(step);
+    else el.textContent = target.toLocaleString() + suffix;
+  };
+  requestAnimationFrame(step);
+}
+function setupStatCounters(cafes, rests, hotels) {
+  const obs = new IntersectionObserver(entries => {
+    entries.forEach(e => {
+      if (!e.isIntersecting) return;
+      obs.unobserve(e.target);
+      const id = e.target.id;
+      if (id === 'statCafes')   animateCount(e.target, cafes, '+');
+      if (id === 'statRests')   animateCount(e.target, rests, '+');
+      if (id === 'statHotels')  animateCount(e.target, hotels, '+');
+    });
+  }, { threshold: 0.4 });
+  ['statCafes','statRests','statHotels'].forEach(id => {
+    const el = document.getElementById(id);
+    if (el) obs.observe(el);
+  });
+}
+
+// ══════════════════════════════════════════════════════════════════
+// CONFETTI
+// ══════════════════════════════════════════════════════════════════
+function launchConfetti() {
+  const colors = ['#0C5235','#16A765','#4ade80','#F5A623','#60a5fa','#a78bfa','#f87171'];
+  for (let i = 0; i < 90; i++) {
+    const el = document.createElement('div');
+    el.className = 'confetti-piece';
+    const size = 6 + Math.random() * 7;
+    el.style.cssText = [
+      `left:${Math.random() * 100}vw`,
+      `width:${size}px`,
+      `height:${size}px`,
+      `background:${colors[Math.floor(Math.random() * colors.length)]}`,
+      `border-radius:${Math.random() > 0.5 ? '50%' : '2px'}`,
+      `animation-duration:${1.4 + Math.random() * 1.6}s`,
+      `animation-delay:${Math.random() * 0.6}s`,
+      `transform:rotate(${Math.random() * 360}deg)`,
+    ].join(';');
+    document.body.appendChild(el);
+    el.addEventListener('animationend', () => el.remove());
+  }
+}
+
+// ══════════════════════════════════════════════════════════════════
+// 3D CARD TILT
+// ══════════════════════════════════════════════════════════════════
+function setupTilt() {
+  document.addEventListener('mousemove', e => {
+    const card = e.target.closest('.place-card');
+    if (!card) return;
+    const r = card.getBoundingClientRect();
+    const x = ((e.clientX - r.left) / r.width  - 0.5) * 12;
+    const y = ((e.clientY - r.top)  / r.height - 0.5) * -12;
+    card.style.transform = `perspective(700px) rotateY(${x}deg) rotateX(${y}deg) translateY(-6px) scale(1.01)`;
+  });
+  document.addEventListener('mouseleave', e => {
+    const card = e.target.closest('.place-card');
+    if (card) card.style.transform = '';
+  }, true);
 }
 
 // ══════════════════════════════════════════════════════════════════
@@ -1299,7 +1424,7 @@ function setupTheme() {
 }
 function applyTheme(theme) {
   document.documentElement.dataset.theme = theme;
-  $('#themeBtn').textContent = theme === 'dark' ? '☀️' : '🌙';
+  $('#themeBtn').innerHTML = theme === 'dark' ? ICONS.sun : ICONS.moon;
   localStorage.setItem('gr-theme', theme);
 }
 
@@ -1307,15 +1432,24 @@ function applyTheme(theme) {
 // SCROLL REVEAL
 // ══════════════════════════════════════════════════════════════════
 function setupScrollReveal() {
-  const obs = new IntersectionObserver((entries) => {
+  const obs = new IntersectionObserver(entries => {
     entries.forEach(e => {
       if (e.isIntersecting) { e.target.classList.add('visible'); obs.unobserve(e.target); }
     });
   }, { threshold: 0.1 });
 
+  // existing: feature + stat cards
   $$('.feature-card, .stat-card').forEach((el, i) => {
     el.classList.add('reveal', `reveal-delay-${(i % 4) + 1}`);
     obs.observe(el);
+  });
+
+  // new: hero sub-elements, section titles
+  $$('.hero-content > *, .sec-title, .stats-sec, .features-sec').forEach((el, i) => {
+    if (!el.classList.contains('reveal') && !el.classList.contains('reveal-up')) {
+      el.classList.add('reveal-up', `delay-${(i % 4) + 1}`);
+      obs.observe(el);
+    }
   });
 }
 
@@ -1361,6 +1495,7 @@ function init() {
   setupModal();
   setupCompare();
   setupNavScroll();
+  setupTilt();
   loadStats();
   setTimeout(setupScrollReveal, 300);
 
