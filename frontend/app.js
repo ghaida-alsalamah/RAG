@@ -86,7 +86,7 @@ function districtCoords(d) {
 // ── Translations ─────────────────────────────────────────────────
 const TRANS = {
   en: {
-    home:'Home', chat:'Chat', explore:'Explore', map:'Map', plan:'Plan My Day',
+    home:'Home', chat:'GoGuide AI', explore:'Explore', map:'Map', plan:'Plan My Day',
     langBtn:'العربية',
     hEyebrow:'AI-Powered Travel Guide · Riyadh, Saudi Arabia',
     hTitle:'Discover Riyadh',
@@ -105,7 +105,7 @@ const TRANS = {
     typeLabels:{ hotel:'Hotel', restaurant:'Restaurant', cafe:'Cafe' },
     chatSidebarH:'Try asking',
     suggestions:['Best cafes for studying','Fine dining restaurants','Budget-friendly hotels','Family-friendly restaurants','Specialty coffee shops','Luxury hotel recommendations','Cafes open late at night','Best rated restaurants'],
-    chatWelcomeTitle:'GoRiyadh Assistant',
+    chatWelcomeTitle:'GoGuide Your Smart Assistant',
     chatWelcomeSub:'Ask me anything about Riyadh — cafes, restaurants, hotels, or help planning your visit.',
     chatPh:'Ask about cafes, restaurants, hotels…',
     exploreTitle:'Explore Riyadh', exploreSub:'Browse the best places across the city',
@@ -137,7 +137,7 @@ const TRANS = {
     approxNight: n => `~${Math.round(n/100)*100} SAR/night`,
   },
   ar: {
-    home:'الرئيسية', chat:'المساعد', explore:'استكشاف', map:'الخريطة', plan:'خطط يومي',
+    home:'الرئيسية', chat:'GoGuide المساعد', explore:'استكشاف', map:'الخريطة', plan:'خطط يومي',
     langBtn:'English',
     hEyebrow:'دليل السفر الذكي · الرياض، المملكة العربية السعودية',
     hTitle:'اكتشف الرياض',
@@ -156,7 +156,7 @@ const TRANS = {
     typeLabels:{ hotel:'فندق', restaurant:'مطعم', cafe:'مقهى' },
     chatSidebarH:'جرّب أن تسأل',
     suggestions:['أفضل مقاهٍ للدراسة','مطاعم راقية للعشاء','فنادق مناسبة للميزانية','مطاعم عائلية','محلات قهوة متخصصة','توصيات فنادق فاخرة','مقاهٍ تفتح حتى وقت متأخر','أعلى المطاعم تقييماً'],
-    chatWelcomeTitle:'مساعد GoRiyadh',
+    chatWelcomeTitle:'GoGuide مساعدك الذكي',
     chatWelcomeSub:'اسألني أي شيء عن الرياض — مقاهٍ أو مطاعم أو فنادق أو مساعدة في التخطيط.',
     chatPh:'اسأل عن مقاهٍ، مطاعم، فنادق…',
     exploreTitle:'استكشف الرياض', exploreSub:'تصفح أفضل الأماكن في المدينة',
@@ -193,7 +193,7 @@ const TRANS = {
 const G = {
   lang: 'en',
   heroPillType: '',
-  exploreType: 'cafe',
+  exploreType: 'hotel',
   exploreLoaded: false,
   exploreDocs: [],
   exploreOffset: 0,
@@ -334,7 +334,7 @@ function navigate(page) {
   const mob = $('#navMobile');
   if (mob) mob.style.display = 'none';
   // lazy init
-  if (page === 'explore' && !G.exploreLoaded) { G.exploreLoaded = true; loadExplore('cafe'); }
+  if (page === 'explore' && !G.exploreLoaded) { G.exploreLoaded = true; loadExplore('hotel'); }
   if (page === 'map' && !G.mapInited) { G.mapInited = true; setTimeout(initMap, 100); }
 }
 
@@ -374,16 +374,15 @@ function setLang(lang) {
 
   // Chat
   const ncb = $('#newChatBtn'); if (ncb) ncb.textContent = T.newChatBtn;
-  $('#chatSidebarH').textContent = T.chatSidebarH;
-  $('#chatSuggestions').querySelectorAll('.suggestion-btn').forEach((b,i) => { b.textContent = T.suggestions[i] || b.textContent; });
+  const csh = $('#chatSidebarH'); if (csh) csh.textContent = T.chatSidebarH;
+  const csug = $('#chatSuggestions'); if (csug) csug.querySelectorAll('.suggestion-btn').forEach((b,i) => { b.textContent = T.suggestions[i] || b.textContent; });
   const cwt = $('#chatWelcomeTitle'); if (cwt) cwt.textContent = T.chatWelcomeTitle;
   const cws = $('#chatWelcomeSub');   if (cws) cws.textContent = T.chatWelcomeSub;
-  $('#chatInput').placeholder = T.chatPh;
+  const ci = $('#chatInput'); if (ci) ci.placeholder = T.chatPh;
 
   // Explore
   $('#exploreTitle').textContent = T.exploreTitle;
   $('#exploreSub').textContent   = T.exploreSub;
-  $('#tabCafe') .closest('.tab-btn') ? null : null;
   $$('.tab-btn').forEach(b => {
     const map = { cafe: T.tabCafe, restaurant: T.tabRest, hotel: T.tabHotel };
     b.textContent = map[b.dataset.type] || b.textContent;
@@ -414,6 +413,7 @@ function setLang(lang) {
   $('#budgetInput').placeholder = T.budgetPh;
   $('#genPlanBtn').textContent  = T.genBtn;
   $('#planEmptyTxt').textContent = T.planEmptyTxt;
+  updatePlanArrows();
 
   // Compare bar buttons (if visible)
   if (G.compareList.length) updateCompareBar();
@@ -748,7 +748,7 @@ async function sendChat() {
 // ══════════════════════════════════════════════════════════════════
 // EXPLORE PAGE
 // ══════════════════════════════════════════════════════════════════
-let exploreState = { type:'cafe', offset:0, total:0 };
+let exploreState = { type:'hotel', offset:0, total:0 };
 const PAGE_SIZE = 24;
 
 function setupExplore() {
@@ -913,7 +913,13 @@ async function loadMapPlaces(type) {
 // ══════════════════════════════════════════════════════════════════
 // PLAN PAGE
 // ══════════════════════════════════════════════════════════════════
+function updatePlanArrows() {
+  const ar = G.lang === 'ar';
+  const pp = $('#planPrev'); if (pp) pp.textContent = ar ? '→' : '←';
+  const pn = $('#planNext'); if (pn) pn.textContent = ar ? '←' : '→';
+}
 function setupPlan() {
+  updatePlanArrows();
   $('#genPlanBtn').addEventListener('click', generatePlans);
   $('#planPrev').addEventListener('click', () => {
     if (!G.plans.length) return;
@@ -1342,6 +1348,14 @@ function hideProgress() {
 // ══════════════════════════════════════════════════════════════════
 // STAT COUNTERS
 // ══════════════════════════════════════════════════════════════════
+function roundedStat(n) {
+  if (n >= 2000) return 2000;
+  if (n >= 1000) return 1000;
+  if (n >= 500)  return 500;
+  if (n >= 100)  return 100;
+  if (n >= 50)   return 50;
+  return n;
+}
 function animateCount(el, target, suffix = '') {
   const duration = 1400;
   const start = performance.now();
@@ -1360,9 +1374,9 @@ function setupStatCounters(cafes, rests, hotels) {
       if (!e.isIntersecting) return;
       obs.unobserve(e.target);
       const id = e.target.id;
-      if (id === 'statCafes')   animateCount(e.target, cafes, '+');
-      if (id === 'statRests')   animateCount(e.target, rests, '+');
-      if (id === 'statHotels')  animateCount(e.target, hotels, '+');
+      if (id === 'statCafes')   animateCount(e.target, roundedStat(cafes), '+');
+      if (id === 'statRests')   animateCount(e.target, roundedStat(rests), '+');
+      if (id === 'statHotels')  animateCount(e.target, roundedStat(hotels), '+');
     });
   }, { threshold: 0.4 });
   ['statCafes','statRests','statHotels'].forEach(id => {
