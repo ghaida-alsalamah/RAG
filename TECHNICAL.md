@@ -1,10 +1,5 @@
 # GoRiyadh — Technical Documentation
 
-## Overview
-
-GoRiyadh is an AI-powered travel guide for Riyadh, Saudi Arabia. It combines a Retrieval-Augmented Generation (RAG) pipeline with a single-page frontend to deliver natural-language recommendations for cafes, restaurants, and hotels across the city.
-
----
 
 ## Architecture
 
