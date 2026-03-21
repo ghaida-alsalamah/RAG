@@ -109,6 +109,16 @@ def get_stats():
     }
 
 
+@app.get("/api/districts")
+def get_districts(place_type: str = ""):
+    _require_engine()
+    meta = engine.metadata
+    if place_type in ("hotel", "restaurant", "cafe"):
+        meta = [d for d in meta if d["type"] == place_type]
+    districts = sorted({d.get("district", "").strip() for d in meta if d.get("district", "").strip()})
+    return {"districts": districts}
+
+
 @app.post("/api/query")
 def query(req: QueryRequest):
     _require_engine()

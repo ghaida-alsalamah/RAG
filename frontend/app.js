@@ -113,7 +113,7 @@ const TRANS = {
     filterHeading:'Filters', fRatingLbl:'Rating', fPriceLbl:'Price level', fDistrictLbl:'District',
     fRatingOpts:['Any rating','4★ and above','4.5★ and above'],
     fPriceOpts:['Any price','Budget','Moderate','Upscale'],
-    fDistrictPh:'e.g. Al Olaya',
+    fDistrictOpts:['Any district'],
     applyBtn:'Apply', resetBtn:'Reset', loadMoreBtn:'Load more',
     mapPageTitle:'Map', mapAll:'All', mapCafe:'Cafes', mapRest:'Restaurants', mapHotel:'Hotels',
     planTitle:'Plan My Day',
@@ -164,7 +164,7 @@ const TRANS = {
     filterHeading:'فلاتر', fRatingLbl:'التقييم', fPriceLbl:'مستوى السعر', fDistrictLbl:'الحي',
     fRatingOpts:['أي تقييم','4 نجوم فأكثر','4.5 نجوم فأكثر'],
     fPriceOpts:['أي سعر','اقتصادي','متوسط','فاخر'],
-    fDistrictPh:'مثال: العليا',
+    fDistrictOpts:['أي حي'],
     applyBtn:'تطبيق', resetBtn:'إعادة تعيين', loadMoreBtn:'تحميل المزيد',
     mapPageTitle:'الخريطة', mapAll:'الكل', mapCafe:'مقاهٍ', mapRest:'مطاعم', mapHotel:'فنادق',
     planTitle:'خطط يومي',
@@ -334,7 +334,7 @@ function navigate(page) {
   const mob = $('#navMobile');
   if (mob) mob.style.display = 'none';
   // lazy init
-  if (page === 'explore' && !G.exploreLoaded) { G.exploreLoaded = true; loadExplore('hotel'); }
+  if (page === 'explore' && !G.exploreLoaded) { G.exploreLoaded = true; loadDistrictOptions('hotel'); loadExplore('hotel'); }
   if (page === 'map' && !G.mapInited) { G.mapInited = true; setTimeout(initMap, 100); }
 }
 
@@ -391,7 +391,8 @@ function setLang(lang) {
   $('#fRatingLbl').textContent    = T.fRatingLbl;
   $('#fPriceLbl').textContent     = T.fPriceLbl;
   $('#fDistrictLbl').textContent  = T.fDistrictLbl;
-  $('#fDistrict').placeholder     = T.fDistrictPh;
+  const fdSel = $('#fDistrict');
+  if (fdSel) { const firstOpt = fdSel.querySelector('option[value=""]'); if (firstOpt) firstOpt.textContent = T.fDistrictOpts[0]; }
   $('#applyFiltersBtn').textContent = T.applyBtn;
   $('#resetFiltersBtn').textContent = T.resetBtn;
   const lmb = $('#loadMoreBtn');
@@ -419,7 +420,11 @@ function setLang(lang) {
   if (G.compareList.length) updateCompareBar();
 
   // Re-render cards if explore is loaded
-  if (G.exploreLoaded && G.exploreDocs.length) renderExploreCards(G.exploreDocs);
+  if (G.exploreLoaded && G.exploreDocs.length) {
+    renderExploreCards(G.exploreDocs);
+    const typeLabel = exploreState.type === 'cafe' ? T.tabCafe : exploreState.type === 'restaurant' ? T.tabRest : T.tabHotel;
+    const ec = $('#exploreCount'); if (ec) ec.textContent = `${G.exploreDocs.length} ${typeLabel}`;
+  }
   if (G.plans.length) renderPlan(G.planIdx);
 }
 
@@ -766,6 +771,7 @@ function setupExplore() {
     btn.addEventListener('click', () => {
       $$('.tab-btn').forEach(b => b.classList.remove('active'));
       btn.classList.add('active');
+      loadDistrictOptions(btn.dataset.type);
       loadExplore(btn.dataset.type);
     });
   });
@@ -776,6 +782,20 @@ function setupExplore() {
     $('#fDistrict').value = '';
     loadExplore(exploreState.type);
   });
+}
+
+async function loadDistrictOptions(type) {
+  const sel = $('#fDistrict');
+  if (!sel) return;
+  const T = TRANS[G.lang];
+  const anyLabel = T.fDistrictOpts ? T.fDistrictOpts[0] : 'Any district';
+  try {
+    const r = await fetch(`/api/districts?place_type=${type}`);
+    const d = await r.json();
+    const prev = sel.value;
+    sel.innerHTML = `<option value="">${anyLabel}</option>` +
+      d.districts.map(n => `<option value="${n}"${n===prev?' selected':''}>${n}</option>`).join('');
+  } catch(_) {}
 }
 
 async function loadExplore(type, append=false) {
