@@ -35,7 +35,7 @@ GoRiyadh is an AI-powered travel guide for Riyadh, Saudi Arabia. It combines a R
 ┌──────────▼──────────┐
 │   FAISS Index       │
 │   rag_index/        │
-│   ~23,000 docs      │
+│   4,439 docs        │
 │   384-dim vectors   │
 └─────────────────────┘
 ```
@@ -44,12 +44,12 @@ GoRiyadh is an AI-powered travel guide for Riyadh, Saudi Arabia. It combines a R
 
 ## Data
 
-| Source | Format | Records | Fields |
-|--------|--------|---------|--------|
-| Riyadh Cafes | CSV | 2,609 | name, rating, rating_count, location, hours |
-| Riyadh Restaurants | CSV | 19,361 | name, categories, address, rating, price, likes |
-| Riyadh Hotels | XLSX | 1,089 | name, price, rating, check-in/out, coordinates |
-| **Total** | | **~23,059** | |
+| Source | Format | Raw Records | Indexed | Filter Applied |
+|--------|--------|-------------|---------|----------------|
+| Riyadh Cafes | CSV | 2,609 | **2,384** | min 3 reviews |
+| Riyadh Restaurants | CSV | 19,361 | **2,000** | top-rated first, café categories excluded, capped at 2,000 |
+| Riyadh Hotels | XLSX | 1,089 | **55** | deduplicated by name, keeps highest-rated entry per hotel |
+| **Total** | | **23,059** | **4,439** | |
 
 Data is preprocessed by `data_loader.py` into a unified schema with fields: `name`, `type`, `rating`, `price`, `district`, `description`, `lat`, `lng`.
 
