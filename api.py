@@ -41,8 +41,10 @@ async def lifespan(app: FastAPI):
         docs = load_all(str(BASE_DIR))
         engine.build_index(docs)
         engine.save_index(idx_path)
-    engine.load_llm()
-    engine.load_translator()
+    if hasattr(engine, "load_llm"):
+        engine.load_llm()
+    if hasattr(engine, "load_translator"):
+        engine.load_translator()
     n = len(engine.metadata)
     print(f"  ✅ Ready — {n:,} places indexed")
     print("─" * 60)
@@ -100,7 +102,7 @@ def _serialise(doc: dict) -> dict:
 def _serialise_arabic(doc: dict) -> dict:
     """Serialise doc and translate the 'text' field to Arabic."""
     out = _serialise(doc)
-    if out.get("text"):
+    if out.get("text") and hasattr(engine, "translate_to_arabic"):
         try:
             out["text"] = engine.translate_to_arabic(out["text"])
         except Exception:
