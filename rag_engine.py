@@ -282,6 +282,26 @@ class RAGEngine:
 
     # ── Generation ────────────────────────────────────────────────────────────
 
+    def translate_to_arabic(self, text: str) -> str:
+        """Translate an English string to Arabic using Groq."""
+        api_key = os.environ.get("GROQ_API_KEY", "")
+        if not api_key or not text.strip():
+            return text
+        try:
+            client = Groq(api_key=api_key)
+            resp = client.chat.completions.create(
+                model="llama-3.3-70b-versatile",
+                messages=[
+                    {"role": "system", "content": "Translate the following text to Arabic. Return only the translated text, nothing else."},
+                    {"role": "user", "content": text},
+                ],
+                max_tokens=400,
+                temperature=0.1,
+            )
+            return resp.choices[0].message.content.strip()
+        except Exception:
+            return text
+
     @staticmethod
     def _dedup_paragraphs(text: str) -> str:
         """Remove duplicate sentences/paragraphs from LLM output."""
