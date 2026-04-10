@@ -41,6 +41,8 @@ async def lifespan(app: FastAPI):
         docs = load_all(str(BASE_DIR))
         engine.build_index(docs)
         engine.save_index(idx_path)
+    engine.load_llm()
+    engine.load_translator()
     n = len(engine.metadata)
     print(f"  ✅ Ready — {n:,} places indexed")
     print("─" * 60)
@@ -95,6 +97,17 @@ def _serialise(doc: dict) -> dict:
     return out
 
 
+def _serialise_arabic(doc: dict) -> dict:
+    """Serialise doc and translate the 'text' field to Arabic."""
+    out = _serialise(doc)
+    if out.get("text"):
+        try:
+            out["text"] = engine.translate_to_arabic(out["text"])
+        except Exception:
+            pass  # fall back to English if translation fails
+    return out
+
+
 # ── Endpoints ─────────────────────────────────────────────────────────────────
 
 @app.get("/api/stats")
@@ -107,16 +120,6 @@ def get_stats():
         "restaurants": sum(1 for d in meta if d["type"] == "restaurant"),
         "cafes":       sum(1 for d in meta if d["type"] == "cafe"),
     }
-
-
-@app.get("/api/districts")
-def get_districts(place_type: str = ""):
-    _require_engine()
-    meta = engine.metadata
-    if place_type in ("hotel", "restaurant", "cafe"):
-        meta = [d for d in meta if d["type"] == place_type]
-    districts = sorted({d.get("district", "").strip() for d in meta if d.get("district", "").strip()})
-    return {"districts": districts}
 
 
 @app.post("/api/query")
@@ -144,9 +147,10 @@ def query(req: QueryRequest):
         price_tiers=price_tiers,
     )
 
+    serialise = _serialise_arabic if is_arabic else _serialise
     return {
         "answer":      answer,
-        "docs":        [_serialise(d) for d in docs],
+        "docs":        [serialise(d) for d in docs],
         "arabic_mode": bool(is_arabic),
         "filter_type": ftype,
         "budget":      budget,
@@ -220,9 +224,10 @@ def chat(req: ChatRequest):
         history=history,
     )
 
+    serialise = _serialise_arabic if is_arabic else _serialise
     return {
         "answer":      answer,
-        "docs":        [_serialise(d) for d in docs],
+        "docs":        [serialise(d) for d in docs],
         "arabic_mode": bool(is_arabic),
         "filter_type": ftype,
         "budget":      budget,
