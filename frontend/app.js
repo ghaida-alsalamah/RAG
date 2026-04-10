@@ -91,7 +91,7 @@ const TRANS = {
     hEyebrow:'AI-Powered Travel Guide · Riyadh, Saudi Arabia',
     hTitle:'Discover Riyadh',
     hAccent:'your way',
-    hSub:'Personalised recommendations for cafes, restaurants & hotels — tailored to your taste and budget.',
+    hSub:'Personalised recommendations for cafes, restaurants & hotels tailored to your taste and budget.',
     searchPh:'Search cafes, restaurants, hotels…',
     searchBtn:'Search',
     pillAll:'All', pillCafe:'Cafes', pillRest:'Restaurants', pillHotel:'Hotels',
